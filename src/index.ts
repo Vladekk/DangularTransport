@@ -1,22 +1,20 @@
 import CloudflareWorkerGlobalScope from 'types-cloudflare-worker';
+import DataService from './dataService';
+
 declare var self: CloudflareWorkerGlobalScope;
 
 export class Worker {
-  public async handle(event: FetchEvent) {
-    const originResponse = fetch(event.request, {
-      cf: {
-        minify: {
-          html: true,
-        },
-      },
-    });
+  public async handle() {
+    const ds = new DataService();
+    const data = ds.FetchData();
+    const d = await data;
 
-    return originResponse;
+    return new Response(d);
   }
 }
 
 self.addEventListener('fetch', (event: Event) => {
   const worker = new Worker();
   const fetchEvent = event as FetchEvent;
-  fetchEvent.respondWith(worker.handle(fetchEvent));
+  fetchEvent.respondWith(worker.handle());
 });
