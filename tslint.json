@@ -14,7 +14,7 @@
   "jsRules": {},
   "rules": {
     "prettier": [
-      true,
+      false,
       {
         "singleQuote": true,
         "trailingComma": "all"
