@@ -8,5 +8,9 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module" module-name="DT-UI" />
+    <orderEntry type="module" module-name="DT-UI" />
+    <orderEntry type="module" module-name="DT-UI" />
+    <orderEntry type="module" module-name="DT-UI" />
   </component>
 </module>

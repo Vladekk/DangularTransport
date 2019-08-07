@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/../DT-UI/.idea/DT-UI.iml" filepath="$PROJECT_DIR$/../DT-UI/.idea/DT-UI.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/DangularTransport.iml" filepath="$PROJECT_DIR$/.idea/DangularTransport.iml" />
     </modules>
   </component>

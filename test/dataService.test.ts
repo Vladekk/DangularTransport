@@ -1,4 +1,3 @@
-import * as dateFns from 'date-fns';
 import fs from 'fs';
 import DataService from '../src/dataService';
 
@@ -10,8 +9,11 @@ describe('dataService', () => {
 
         const ds = new DataService();
         await ds.FetchData();
-        expect(ds.GetCenterTime()[0].toJSON()).toBe('2019-08-05T02:46:00.000Z');
-        expect(ds.GetEndTime()[0].toJSON()).toBe('2019-08-05T03:04:00.000Z');
+
+        expect(ds.GetCenterTime()[0].getHours()).toBe(5);
+        expect(ds.GetCenterTime()[0].getMinutes()).toBe(46);
+        expect(ds.GetEndTime()[0].getHours()).toBe(6);
+        expect(ds.GetEndTime()[0].getMinutes()).toBe(4);
 
     });
 
@@ -20,9 +22,14 @@ describe('dataService', () => {
 
         const ds = new DataService();
         await ds.FetchData();
-        const [centerRuns, endRuns] = ds.GetClosestRuns(dateFns.parseISO('2019-08-05T06:00:00.000Z'));
-        expect(centerRuns[0].toJSON()).toBe('2019-08-05T06:09:00.000Z');
-        expect(endRuns[0].toJSON()).toBe('2019-08-05T06:19:00.000Z');
+        const since = new Date();
+        since.setHours(6, 0, 0, 0);
+
+        const [centerRuns, endRuns] = ds.GetClosestRuns(since);
+        expect(centerRuns[0].getHours()).toBe(6);
+        expect(centerRuns[0].getMinutes()).toBe(0);
+        expect(endRuns[0].getHours()).toBe(6);
+        expect(endRuns[0].getMinutes()).toBe(4);
 
     });
 
