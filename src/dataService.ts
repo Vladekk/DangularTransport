@@ -53,6 +53,7 @@ export default class DataService {
                 const rd = RouteDataProxy.Create(data);
                 const centralStationSchedule = rd.stations[0];
                 const endStationSchedule = rd.stations.reverse()[0];
+
                 this._fromCenterTimes = centralStationSchedule.wtlist.map(this.ParseTime);
                 this._fromEndTimes = endStationSchedule.wtlist.map(this.ParseTime);
 
