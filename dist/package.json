@@ -1,0 +1,22 @@
+{
+    "name": "dangulartransport",
+    "version": "1.0.0",
+    "description": "Daugavpils Satiksme quick schedule watch backend",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "format": "prettier --write '**/*.{js,css,json,md}'"
+    },
+    "author": "vkugelevics <vlad@izvne.com>",
+    "license": "MIT",
+    "devDependencies": {
+        "husky": "^2.1.0",
+        "prettier": "^1.17.0"
+    },
+    "husky": {
+        "hooks": {
+            "pre-commit": "npm run format",
+            "pre-push": "npm run format"
+        }
+    }
+}

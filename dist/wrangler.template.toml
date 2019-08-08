@@ -1,0 +1,13 @@
+name = "dangulartransport"
+type = "javascript"
+private = false
+#insert your acc id here
+account_id = ""
+route = "*upside.down.pictures/api*"
+#insert your zone id here
+zone_id = ""
+
+[[kv-namespaces]]
+#insert your kv binding id and name here
+binding = "logs"
+id = ""

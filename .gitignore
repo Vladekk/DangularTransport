@@ -1,2 +1,5 @@
 node_modules
-dist
+/dist/wrangler.toml
+/dist/logs.kv.json
+/dist/index.js
+/dist/npm-debug.log

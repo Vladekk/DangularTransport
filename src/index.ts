@@ -21,7 +21,7 @@ export class Worker {
         const ds = new DataService();
 
         // noinspection ES6MissingAwait
-        this.log.put(`${new Date().toISOString()} ${headers.get('cf-ray')}`, `Incoming request headers \n ${JSON.stringify([...headers])}`);
+        this.log.put(`${headers.get('cf-ray')}`, `Incoming request headers \n ${JSON.stringify([...headers])}`);
         await ds.FetchData();
         const since = new Date();
         const runs = ds.GetClosestRuns(since);
