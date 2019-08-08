@@ -1,6 +1,8 @@
 import CloudflareWorkerGlobalScope, {CloudflareWorkerKV} from 'types-cloudflare-worker';
+import * as packageJson from '../package.json';
 import DataService from './dataService';
 import {SimpleLogService} from './simpleLogService';
+
 
 declare var self: CloudflareWorkerGlobalScope;
 
@@ -10,7 +12,7 @@ export class Worker {
         'Access-Control-Allow-Headers': 'Content-Type, x-ijt',
         'Access-Control-Allow-Methods': 'GET, HEAD, POST, OPTIONS',
         'Access-Control-Allow-Origin': '*',
-        'X-Debug': ''
+        'X-App-Version': ''
     };
 
 
@@ -28,7 +30,7 @@ export class Worker {
         await ds.FetchData();
         const since = new Date();
         const runs = ds.GetClosestRuns(since);
-        this.corsHeaders['X-Debug'] = JSON.stringify(headers);
+        this.corsHeaders['X-App-Version'] = packageJson.version;
         return new Response(JSON.stringify(runs), {headers: this.corsHeaders});
 
     }
