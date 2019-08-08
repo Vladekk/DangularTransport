@@ -1,5 +1,8 @@
 import * as dateFns from 'date-fns'
+import {environment} from '../../DT-UI/src/environments/environment';
+import {ISimpleLogService} from './ISimpleLogService';
 import {RouteDataProxy} from './RouteData';
+
 
 export default class DataService {
 
@@ -11,7 +14,8 @@ export default class DataService {
 
     private htmlSourcePageUrl = 'http://satiksme.daugavpils.lv/autobuss-nr-17a-autoosta-csdd-jaunforstadte';
 
-    constructor(fromCenterTimes: Date[] = new Array<Date>(),
+    constructor(private logService: ISimpleLogService,
+                fromCenterTimes: Date[] = new Array<Date>(),
                 fromEndTimes: Date[] = new Array<Date>(),
                 fromCenterHolidayTimes: Date[] = new Array<Date>(),
                 fromEndHolidayTimes: Date[] = new Array<Date>()) {
@@ -33,7 +37,7 @@ export default class DataService {
     public async FetchData(): Promise<void> {
 
         const res = await fetch(
-            this.htmlSourcePageUrl,
+            environment.SchedulePageUrl,
         );
         const src = await res.text();
         // see ./test/testPageFor17A.html file to see how data looks inside it
@@ -49,6 +53,7 @@ export default class DataService {
         if (src != null) {
             const matches = dataPattern.exec(src);
             if (matches != null && matches.length !== 0) {
+                this.logService.Log('Found match from html source for route schedule data');
                 const data: object = JSON.parse(matches[0].replace('var data = ', ''));
                 const rd = RouteDataProxy.Create(data);
                 const centralStationSchedule = rd.stations[0];
@@ -59,13 +64,16 @@ export default class DataService {
 
                 this._fromCenterHolidayTimes = centralStationSchedule.htlist.map(this.ParseTime);
                 this._fromEndHolidayTimes = endStationSchedule.htlist.map(this.ParseTime);
+
+                this.logService.Log(`Saved data, showing closest runs`);
+                this.logService.Log(this.GetClosestRuns(this.ParseTime('04:00')));
             }
         } else {
-            throw new Error(`Cannot fetch source html from url ${this.htmlSourcePageUrl}`)
+            const error = new Error(`Cannot fetch source html from url ${this.htmlSourcePageUrl}`);
+            this.logService.Log(error);
+            throw error
         }
 
-
-        // return rp('http://satiksme.daugavpils.lv/autobuss-nr-17a-autoosta-csdd-jaunforstadte');
     }
 
     public GetClosestRuns(since: Date): [Date[], Date[]] {

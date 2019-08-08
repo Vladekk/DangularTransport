@@ -1,5 +1,6 @@
 import CloudflareWorkerGlobalScope, {CloudflareWorkerKV} from 'types-cloudflare-worker';
 import DataService from './dataService';
+import {SimpleLogService} from './simpleLogService';
 
 declare var self: CloudflareWorkerGlobalScope;
 
@@ -18,10 +19,12 @@ export class Worker {
 
     public async handle(headers: Map<string, string>) {
 
-        const ds = new DataService();
 
-        // noinspection ES6MissingAwait
-        this.log.put(`${headers.get('cf-ray')}`, `Incoming request headers \n ${JSON.stringify([...headers])}`);
+        const rayId = headers.get('cf-ray') as string;
+        const logService = new SimpleLogService(this.log, rayId, headers);
+        const ds = new DataService(logService);
+
+        // let cache = caches.default
         await ds.FetchData();
         const since = new Date();
         const runs = ds.GetClosestRuns(since);
@@ -41,3 +44,4 @@ self.addEventListener('fetch', (event: Event) => {
     fetchEvent.respondWith(worker.handle(headers));
 
 });
+
