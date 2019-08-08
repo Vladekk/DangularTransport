@@ -1,12 +1,13 @@
 import {addMilliseconds} from 'date-fns';
 import {CloudflareWorkerKV} from 'types-cloudflare-worker';
+import * as packageJson from '../package.json'
 import {ISimpleLogService} from './ISimpleLogService';
 
 export class SimpleLogService implements ISimpleLogService {
     private timer: number = 0;
 
     constructor(private log: CloudflareWorkerKV, private rayId: string, headers: Map<string, string>) {
-        this.Log(`Starting loggger, DT version ${1}}`);
+        this.Log(`Starting loggger, DT version ${packageJson.version}}`);
         this.Log([...headers]);
         // setInterval(() => this.timer++, 1);
     }
