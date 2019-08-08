@@ -36,11 +36,8 @@ declare var logs: any;
 
 self.addEventListener('fetch', (event: Event) => {
     const worker = new Worker(logs as CloudflareWorkerKV);
-
     const fetchEvent = event as FetchEvent;
-    const headersArr = new Map((event as any).request.headers);
-
-
-    fetchEvent.respondWith(worker.handle(headersArr));
+    const headers = new Map<string, string>((event as any).request.headers);
+    fetchEvent.respondWith(worker.handle(headers));
 
 });
