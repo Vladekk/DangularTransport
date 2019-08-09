@@ -1,6 +1,6 @@
 import CloudflareWorkerGlobalScope, {CloudflareDefaultCacheStorage, CloudflareWorkerKV} from 'types-cloudflare-worker';
 // @ts-ignore
-import {Router} from '../lib/router.js';
+import Router from '../lib/router.js';
 import * as packageJson from '../package.json';
 import DataService from './dataService';
 import {SimpleLogService} from './simpleLogService';
@@ -22,14 +22,11 @@ export class Worker {
 
     }
 
-    public async handle() {
-
-
+    public async GetClosestRuns() {
         await this.dataService.FetchData();
         const since = new Date();
         const runs = this.dataService.GetClosestRuns(since);
         this.corsHeaders['X-App-Version'] = packageJson.version;
-
         return new Response(JSON.stringify(runs), {headers: this.corsHeaders});
 
     }
@@ -37,13 +34,14 @@ export class Worker {
     public async routeRequest(request: any) {
         //    const headers = new Map<string, string>(request.headers);
         const router = new Router();
+        this.logService.Log('Routing incoming request');
         // Replace with the approriate paths and handlers
-        //    router.get('.*/api/GetClosestRuns', () => this.handle(headers));
+        router.get('.*/api/GetClosestRuns', () => this.GetClosestRuns());
         // r.get('.*/foo', req => handler(req))
         // r.post('.*/foo.*', req => handler(req))
         // r.get('/demos/router/foo', req => fetch(req)) // return the response from the origin
         //
-        router.get('/', () => new Response('Hello worker!')); // return a default message for the root route
+        //   router.get('/', () => new Response('Hello worker!')); // return a default message for the root route
 
         const resp = await router.route(request);
         return resp
@@ -66,8 +64,7 @@ self.addEventListener('fetch', (event: Event) => {
     const worker = new Worker(cache, logService, dataService);
     const fetchEvent = event as FetchEvent;
 
-
-    fetchEvent.respondWith(worker.handle());
+    fetchEvent.respondWith(worker.routeRequest(request));
 
 });
 

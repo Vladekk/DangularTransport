@@ -9,6 +9,7 @@ export class SimpleLogService implements ISimpleLogService {
     constructor(private log: CloudflareWorkerKV, private rayId: string, headers: Map<string, string>) {
         this.Log(`Starting loggger, DT version ${packageJson.version}}`);
         this.Log([...headers]);
+
         // setInterval(() => this.timer++, 1);
     }
 
@@ -16,6 +17,7 @@ export class SimpleLogService implements ISimpleLogService {
         this.timer++;
         const now = addMilliseconds(new Date(), this.timer);
         // noinspection JSIgnoredPromiseFromCall
-        this.log.put(`${this.rayId} ${now.toISOString()}`, JSON.stringify(obj, null, 2));
+        const value = JSON.stringify(obj, null, 2);
+        this.log.put(`${this.rayId} ${now.toISOString()}`, value);
     }
 }
