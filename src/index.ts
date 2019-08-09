@@ -11,7 +11,7 @@ export class Worker {
     private corsHeaders = {
         // TODO: modify for production
         'Access-Control-Allow-Headers': 'Content-Type, x-ijt',
-        'Access-Control-Allow-Methods': 'GET, HEAD, OPTIONS',
+        'Access-Control-Allow-Methods': 'GET, HEAD, POST, OPTIONS',
         'Access-Control-Allow-Origin': '*',
         'X-App-Version': ''
     };
