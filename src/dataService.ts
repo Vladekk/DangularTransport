@@ -1,4 +1,5 @@
 import * as dateFns from 'date-fns'
+import {CloudflareDefaultCacheStorage} from 'types-cloudflare-worker';
 import {environment} from '../../DT-UI/src/environments/environment';
 import {ISimpleLogService} from './ISimpleLogService';
 import {RouteDataProxy} from './RouteData';
@@ -14,7 +15,8 @@ export default class DataService {
 
     private htmlSourcePageUrl = 'http://satiksme.daugavpils.lv/autobuss-nr-17a-autoosta-csdd-jaunforstadte';
 
-    constructor(private logService: ISimpleLogService,
+    // @ts-ignore
+    constructor(private logService: ISimpleLogService, private cache: CloudflareDefaultCacheStorage,
                 fromCenterTimes: Date[] = new Array<Date>(),
                 fromEndTimes: Date[] = new Array<Date>(),
                 fromCenterHolidayTimes: Date[] = new Array<Date>(),
@@ -23,6 +25,7 @@ export default class DataService {
         this._fromEndTimes = fromEndTimes;
         this._fromCenterHolidayTimes = fromCenterHolidayTimes;
         this._fromEndHolidayTimes = fromEndHolidayTimes;
+
     }
 
 
@@ -37,7 +40,7 @@ export default class DataService {
     public async FetchData(): Promise<void> {
 
         const res = await fetch(
-            environment.SchedulePageUrl,
+            environment.SchedulePageUrl, {cf: {cacheEverything: true}}
         );
         const src = await res.text();
         // see ./test/testPageFor17A.html file to see how data looks inside it
