@@ -14,10 +14,16 @@ export class SimpleLogService implements ISimpleLogService {
     }
 
     public Log(obj: any) {
+
         this.timer++;
         const now = addMilliseconds(new Date(), this.timer);
         // noinspection JSIgnoredPromiseFromCall
         const value = JSON.stringify(obj, null, 2);
         this.log.put(`${this.rayId} ${now.toISOString()}`, value);
+
+        if (console) {
+            // tslint:disable-next-line:no-console
+            console.log(value)
+        }
     }
 }

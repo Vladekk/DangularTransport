@@ -11,7 +11,7 @@ declare var self: CloudflareWorkerGlobalScope;
 export class Worker {
     private corsHeaders = {
         // TODO: modify for production
-        'Access-Control-Allow-Headers': 'Origin, Content-Type, X-Auth-Token',
+        'Access-Control-Allow-Headers': 'Origin, Content-Type, X-Auth-Token, cf-connecting-ip, ',
         'Access-Control-Allow-Methods': 'GET, POST, PATCH, PUT, DELETE, OPTIONS',
         'Access-Control-Allow-Origin': '*',
         // 'Access-Control-Allow-Origin': 'localhost',
@@ -28,8 +28,8 @@ export class Worker {
     }
 
     // @ts-ignore
-    public async GetClosestRuns(routeNumber: string | null) {
-        await this.dataService.FetchData();
+    public async GetClosestRuns(routeNumber: string) {
+        await this.dataService.FetchData(routeNumber);
         const since = new Date();
         const runs = this.dataService.GetClosestRuns(since);
         this.corsHeaders['X-App-Version'] = packageJson.version;
@@ -42,15 +42,17 @@ export class Worker {
         //    const headers = new Map<string, string>(request.headers);
         const router = new Router();
         this.logService.Log('Routing incoming request');
+        // tslint:disable-next-line:no-console
 
-        if (request.method === 'OPTIONS') {
-            //   throw new Error(JSON.stringify([...request.headers]));
+        if (request.method === 'OPTIONS') {            
             return new Response(null, {headers: this.corsHeaders});
         }
 
         // Replace with the approriate paths and handlers
-        router.post('.*/api/GetClosestRuns', () => {
-            const body = request.json() as IGetClosestRunsArgs;
+        router.post('.*/api/GetClosestRuns', async () => {
+            const body = await request.json() as IGetClosestRunsArgs;
+            this.logService.Log(`Received body`);
+            this.logService.Log(body);
             return this.GetClosestRuns(body.BusNumber);
         });
 
@@ -78,16 +80,3 @@ self.addEventListener('fetch', (event: Event) => {
     fetchEvent.respondWith(worker.routeRequest(request));
 
 });
-
-/*
-
-let arr1=$('.saraksts-list .title a').toArray().map(a=>a.href);
-undefined
- let arr2=$('.saraksts-list .mnumber').toArray().map(e=>$(e).text());
-
- let finArr=new Map();
-for (let i=0;i<34;i++){
-  finArr[arr2[i]]=arr1[i];
-}
-
- */

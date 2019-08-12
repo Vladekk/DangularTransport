@@ -12,7 +12,7 @@ describe('dataService', () => {
         fetchMock.mockResponseOnce(testData.toString());
 
         const ds = new DataService(new NullLogService(), self.caches.default);
-        await ds.FetchData();
+        await ds.FetchData('17A');
 
         expect(ds.GetCenterTime()[0].getHours()).toBe(5);
         expect(ds.GetCenterTime()[0].getMinutes()).toBe(46);
@@ -25,7 +25,7 @@ describe('dataService', () => {
         fetchMock.mockResponseOnce(testData.toString());
 
         const ds = new DataService(new NullLogService(), self.caches.default);
-        await ds.FetchData();
+        await ds.FetchData('17A`');
         const since = new Date();
         since.setHours(6, 0, 0, 0);
 

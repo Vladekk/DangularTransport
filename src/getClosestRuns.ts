@@ -1,3 +1,3 @@
 export interface IGetClosestRunsArgs {
-    BusNumber: string | null;
+    BusNumber: string;
 }
