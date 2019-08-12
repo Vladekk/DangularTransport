@@ -3,6 +3,7 @@ import CloudflareWorkerGlobalScope, {CloudflareDefaultCacheStorage, CloudflareWo
 import Router from '../lib/router.js';
 import * as packageJson from '../package.json';
 import DataService from './dataService';
+import {IGetClosestRunsArgs} from './getClosestRuns';
 import {SimpleLogService} from './simpleLogService';
 
 declare var self: CloudflareWorkerGlobalScope;
@@ -10,9 +11,13 @@ declare var self: CloudflareWorkerGlobalScope;
 export class Worker {
     private corsHeaders = {
         // TODO: modify for production
-        'Access-Control-Allow-Headers': 'Content-Type, x-ijt',
-        'Access-Control-Allow-Methods': 'GET, HEAD, POST, OPTIONS',
+        'Access-Control-Allow-Headers': 'Origin, Content-Type, X-Auth-Token',
+        'Access-Control-Allow-Methods': 'GET, POST, PATCH, PUT, DELETE, OPTIONS',
         'Access-Control-Allow-Origin': '*',
+        // 'Access-Control-Allow-Origin': 'localhost',
+        // 'Access-Control-Allow-Origin': '*',
+        'Access-Control-Max-Age': '86400',
+        'Allow': 'GET, HEAD, POST, OPTIONS',
         'X-App-Version': ''
     };
 
@@ -22,11 +27,13 @@ export class Worker {
 
     }
 
-    public async GetClosestRuns() {
+    // @ts-ignore
+    public async GetClosestRuns(routeNumber: string | null) {
         await this.dataService.FetchData();
         const since = new Date();
         const runs = this.dataService.GetClosestRuns(since);
         this.corsHeaders['X-App-Version'] = packageJson.version;
+        // throw new Error(JSON.stringify(runs))
         return new Response(JSON.stringify(runs), {headers: this.corsHeaders});
 
     }
@@ -35,13 +42,17 @@ export class Worker {
         //    const headers = new Map<string, string>(request.headers);
         const router = new Router();
         this.logService.Log('Routing incoming request');
+
+        if (request.method === 'OPTIONS') {
+            //   throw new Error(JSON.stringify([...request.headers]));
+            return new Response(null, {headers: this.corsHeaders});
+        }
+
         // Replace with the approriate paths and handlers
-        router.get('.*/api/GetClosestRuns', () => this.GetClosestRuns());
-        // r.get('.*/foo', req => handler(req))
-        // r.post('.*/foo.*', req => handler(req))
-        // r.get('/demos/router/foo', req => fetch(req)) // return the response from the origin
-        //
-        //   router.get('/', () => new Response('Hello worker!')); // return a default message for the root route
+        router.post('.*/api/GetClosestRuns', () => {
+            const body = request.json() as IGetClosestRunsArgs;
+            return this.GetClosestRuns(body.BusNumber);
+        });
 
         const resp = await router.route(request);
         return resp
@@ -68,3 +79,15 @@ self.addEventListener('fetch', (event: Event) => {
 
 });
 
+/*
+
+let arr1=$('.saraksts-list .title a').toArray().map(a=>a.href);
+undefined
+ let arr2=$('.saraksts-list .mnumber').toArray().map(e=>$(e).text());
+
+ let finArr=new Map();
+for (let i=0;i<34;i++){
+  finArr[arr2[i]]=arr1[i];
+}
+
+ */
