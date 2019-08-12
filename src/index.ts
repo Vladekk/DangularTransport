@@ -4,6 +4,7 @@ import Router from '../lib/router.js';
 import * as packageJson from '../package.json';
 import DataService from './dataService';
 import {IGetClosestRunsArgs} from './getClosestRuns';
+import {IGetAllRoutesArgs} from './IGetAllRoutesArgs';
 import {SimpleLogService} from './simpleLogService';
 
 declare var self: CloudflareWorkerGlobalScope;
@@ -11,7 +12,7 @@ declare var self: CloudflareWorkerGlobalScope;
 export class Worker {
     private corsHeaders = {
         // TODO: modify for production
-        'Access-Control-Allow-Headers': 'Origin, Content-Type, X-Auth-Token, cf-connecting-ip, ',
+        'Access-Control-Allow-Headers': 'Origin, Content-Type, X-Auth-Token, cf-connecting-ip,x-ijt ',
         'Access-Control-Allow-Methods': 'GET, POST, PATCH, PUT, DELETE, OPTIONS',
         'Access-Control-Allow-Origin': '*',
         // 'Access-Control-Allow-Origin': 'localhost',
@@ -56,10 +57,25 @@ export class Worker {
             return this.GetClosestRuns(body.BusNumber);
         });
 
+        // Replace with the approriate paths and handlers
+        router.post('.*/api/GetAllRoutes', async () => {
+            const body = await request.json() as IGetAllRoutesArgs;
+            this.logService.Log(`GetAllRoutes method received args`);
+            this.logService.Log(body);
+            this.logService.Log('Sending response ');
+            const routes = Array.from(this.GetAllRoutes());
+            this.logService.Log(routes);
+
+            return new Response(JSON.stringify(routes), {headers: this.corsHeaders});
+        });
+
         const resp = await router.route(request);
-        return resp
+        return resp;
     }
 
+    private GetAllRoutes() {
+        return this.dataService.GetAllSchedules();
+    }
 }
 
 // fake stub to avoid typscript undeclared error
