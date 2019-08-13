@@ -45,7 +45,7 @@ export class Worker {
         this.logService.Log('Routing incoming request');
         // tslint:disable-next-line:no-console
 
-        if (request.method === 'OPTIONS') {            
+        if (request.method === 'OPTIONS') {
             return new Response(null, {headers: this.corsHeaders});
         }
 
@@ -63,9 +63,8 @@ export class Worker {
             this.logService.Log(`GetAllRoutes method received args`);
             this.logService.Log(body);
             this.logService.Log('Sending response ');
-            const routes = Array.from(this.GetAllRoutes());
+            const routes = this.GetAllRoutes();
             this.logService.Log(routes);
-
             return new Response(JSON.stringify(routes), {headers: this.corsHeaders});
         });
 
@@ -74,7 +73,7 @@ export class Worker {
     }
 
     private GetAllRoutes() {
-        return this.dataService.GetAllSchedules();
+        return this.dataService.GetAllRoutes();
     }
 }
 

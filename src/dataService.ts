@@ -1,6 +1,9 @@
 /* tslint:disable:object-literal-sort-keys */
 import * as dateFns from 'date-fns'
 import {CloudflareDefaultCacheStorage} from 'types-cloudflare-worker';
+import {IRoute} from '../../DT-UI/src/app/IRoute';
+import {Route} from '../../DT-UI/src/app/Route';
+import {IDictionary} from './IDictionary';
 import {ISimpleLogService} from './ISimpleLogService';
 import {RouteDataProxy} from './RouteData';
 
@@ -13,7 +16,7 @@ export default class DataService {
     private _fromCenterTimes: Date[];
     private _fromEndTimes: Date[];
 
-    private allSchedules: Map<string, string> = new Map(Object.entries({
+    private allSchedules: IDictionary<string> = {
         '1': 'http://www.satiksme.daugavpils.lv/autobuss-nr-1-autoosta-regionala-slimnica-celinieku-ciemats',
         '2': 'http://www.satiksme.daugavpils.lv/autobuss-nr-2-garazas-autoosta',
         '3': 'http://www.satiksme.daugavpils.lv/autobuss-nr-3-autoosta-kooperativs',
@@ -48,7 +51,7 @@ export default class DataService {
         '20A2': 'http://www.satiksme.daugavpils.lv/autobuss-nr-20a2-jaunforstadte-kimiku-ciemats-slimnica',
         '20A': 'http://www.satiksme.daugavpils.lv/autobuss-nr-20a-jaunforstadte-jaunbuve',
         '20B': 'http://www.satiksme.daugavpils.lv/autobuss-nr-20b-jaunforstadte-smiltenes-jaunbuve-kimiku-ciemats'
-    }));
+    };
 
 
     // @ts-ignore
@@ -94,7 +97,7 @@ export default class DataService {
         // const allSchedulesMapStr = '{"1":"http://www.satiksme.daugavpils.lv/autobuss-nr-1-autoosta-regionala-slimnica-celinieku-ciemats","2":"http://www.satiksme.daugavpils.lv/autobuss-nr-2-garazas-autoosta","3":"http://www.satiksme.daugavpils.lv/autobuss-nr-3-autoosta-kooperativs","4":"http://www.satiksme.daugavpils.lv/autobuss-nr-4-autoosta-cietoksnis-mezciems-autoosta","5":"http://www.satiksme.daugavpils.lv/autobuss-nr-5-autoosta-mezciems-cietoksnis-autoosta","6":"http://www.satiksme.daugavpils.lv/autobuss-nr-6-autoosta-niderkuni","7":"http://www.satiksme.daugavpils.lv/autobuss-nr-7-autoosta-kalkuni","8":"http://www.satiksme.daugavpils.lv/autobuss-nr-8-autoosta-judovka","9":"http://www.satiksme.daugavpils.lv/autobuss-nr-9-autoosta-kirsu-iela","10":"http://www.satiksme.daugavpils.lv/autobuss-nr-10-autoosta-rugeli","11":"http://www.satiksme.daugavpils.lv/autobuss-nr-11-jaunforstadte-slimnica","12":"http://www.satiksme.daugavpils.lv/autobuss-nr-12-autoosta-krizi","13":"http://www.satiksme.daugavpils.lv/autobuss-nr-13-autoosta-mezciema-arodskola","14":"http://www.satiksme.daugavpils.lv/autobuss-nr-14-autoosta-cietoksnis-kimija-autoosta","15":"http://www.satiksme.daugavpils.lv/autobuss-nr-15-autoosta-liginiski-autoosta","16":"http://www.satiksme.daugavpils.lv/autobuss-nr-16-autoosta-piena-kombin%C4%81ta-ciemats-autoosta","17":"http://www.satiksme.daugavpils.lv/autobuss-nr-17-autoosta-stacijas-jaunforstadte","18":"http://www.satiksme.daugavpils.lv/autobuss-nr-18-viduspogulanka-autoosta","19":"http://www.satiksme.daugavpils.lv/autobuss-nr-19-jaunforstadte-kimiku-ciemats-jaunbuve-jaunforstadte-ciolkovska","20":"http://www.satiksme.daugavpils.lv/autobuss-nr-20-jaunforstadte-jaunbuve-kimiku-jaunforstadte-no-ciolkovska","21":"http://www.satiksme.daugavpils.lv/autobuss-nr-21-autobusu-parks-daugavpils-ao-jaunforstadte","22":"http://www.satiksme.daugavpils.lv/autobuss-nr-22-autobusu-parks-krizi","23":"http://www.satiksme.daugavpils.lv/autobuss-nr-23-rugeli-regionala-slimnica","24":"http://www.satiksme.daugavpils.lv/autobuss-nr-24-autoosta-jaunbuve-kimiku-ciemats-jaunforstadte-cietoksnis-autoosta","26":"http://www.satiksme.daugavpils.lv/autobuss-nr-26-autoosta-%C4%B7imi%C4%B7u-ciemats-jaunfor%C5%A1tadte-autoosta","3B":"http://www.satiksme.daugavpils.lv/autobuss-nr-3b-autoosta-ziegler-masinbuve","3C":"http://www.satiksme.daugavpils.lv/autobuss-nr-3c-autoosta-ziglier-masinbuve","7B":"http://www.satiksme.daugavpils.lv/autobuss-nr-7b-autoosta-micurinietis","10A":"http://www.satiksme.daugavpils.lv/autobuss-nr-10a-autoosta-rugeli","13A":"http://www.satiksme.daugavpils.lv/autobuss-nr-13a-autoosta-cietoksnis","17A":"http://www.satiksme.daugavpils.lv/autobuss-nr-17a-autoosta-csdd-jaunforstadte","20A2":"http://www.satiksme.daugavpils.lv/autobuss-nr-20a2-jaunforstadte-kimiku-ciemats-slimnica","20A":"http://www.satiksme.daugavpils.lv/autobuss-nr-20a-jaunforstadte-jaunbuve","20B":"http://www.satiksme.daugavpils.lv/autobuss-nr-20b-jaunforstadte-smiltenes-jaunbuve-kimiku-ciemats"}';
 //        allSchedulesResp.text();
 
-        const url = this.allSchedules.get(routeNumber.toUpperCase()) as string;
+        const url = this.allSchedules[routeNumber.toUpperCase()] as string;
         const res = await fetch(
             url, {cf: {cacheEverything: true}}
         );
@@ -153,8 +156,8 @@ export default class DataService {
 
     }
 
-    public GetAllSchedules(): Map<string, string> {
-        return this.allSchedules;
+    public GetAllRoutes(): IRoute[] {
+        return Object.entries(this.allSchedules).map(r => new Route({Number: r[0], Link: r[1]}));
     }
 
     private ParseTime(time: string): Date {
